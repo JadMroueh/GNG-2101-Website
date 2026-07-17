@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="A one-hand adaptive cutting station that lets a child with limited hand mobility cut paper independently. Built by Team Z14 for GNG2101 at the University of Ottawa.">
+  <title>One-Hand Adaptive Cutting Station | Team Z14</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* How-to video: a four-scene animated sequence on one 24s loop */
+    .howto-video {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin: 2rem 0 0;
+    }
+    .howto-video svg { display: block; width: 100%; height: auto; }
+    .howto-video .vbar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--line);
+    }
+    .vcaps {
+      position: relative;
+      flex: 1;
+      min-height: 3em;
+      display: grid;
+    }
+    .vcap {
+      grid-area: 1 / 1;
+      margin: 0;
+      align-self: center;
+      font-weight: 600;
+      color: var(--ink-soft);
+      opacity: 0;
+    }
+    .video-toggle {
+      flex-shrink: 0;
+      min-height: 44px;
+      min-width: 88px;
+      border: 2px solid var(--blue);
+      background: var(--surface);
+      color: var(--blue-dark);
+      font: inherit;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 0.4rem 1.1rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 200ms ease-out;
+    }
+    .video-toggle:hover { background: var(--blue-tint); }
+
+    .scene { opacity: 0; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .scene.s1 { animation: sc1 24s ease-in-out infinite; }
+      .scene.s2 { animation: sc2 24s ease-in-out infinite; }
+      .scene.s3 { animation: sc3 24s ease-in-out infinite; }
+      .scene.s4 { animation: sc4 24s ease-in-out infinite; }
+      .vcap.c1 { animation: sc1 24s ease-in-out infinite; }
+      .vcap.c2 { animation: sc2 24s ease-in-out infinite; }
+      .vcap.c3 { animation: sc3 24s ease-in-out infinite; }
+      .vcap.c4 { animation: sc4 24s ease-in-out infinite; }
+
+      .anim-board    { animation: kb-board 24s ease-in-out infinite; transform-origin: 300px 366px; }
+      .anim-lock     { animation: kb-lock 24s ease-in-out infinite; }
+      .anim-paper2   { animation: kb-paper 24s ease-out infinite; }
+      .st-top        { animation: kb-st-top 24s ease-out infinite; }
+      .st-right      { animation: kb-st-right 24s ease-out infinite; }
+      .st-bottom     { animation: kb-st-bottom 24s ease-out infinite; }
+      .st-left       { animation: kb-st-left 24s ease-out infinite; }
+      .anim-brace-on { animation: kb-brace-on 24s ease-out infinite; }
+      .anim-brace-cut{ animation: kb-brace-cut 24s ease-in-out infinite; }
+      .anim-cutline  { animation: kb-cutline 24s ease-in-out infinite; }
+
+      @keyframes sc1 { 0%, 23% { opacity: 1; } 25%, 100% { opacity: 0; } }
+      @keyframes sc2 { 0%, 25% { opacity: 0; } 27%, 48% { opacity: 1; } 50%, 100% { opacity: 0; } }
+      @keyframes sc3 { 0%, 50% { opacity: 0; } 52%, 73% { opacity: 1; } 75%, 100% { opacity: 0; } }
+      @keyframes sc4 { 0%, 75% { opacity: 0; } 77%, 97% { opacity: 1; } 100% { opacity: 0; } }
+
+      @keyframes kb-board { 0%, 6% { transform: rotate(-6deg); } 16%, 100% { transform: rotate(-28deg); } }
+      @keyframes kb-lock  { 0%, 16% { opacity: 0; } 19%, 100% { opacity: 1; } }
+      @keyframes kb-paper { 0%, 27% { opacity: 0; transform: translateY(-40px); } 32%, 100% { opacity: 1; transform: none; } }
+      @keyframes kb-st-top    { 0%, 33% { opacity: 0; transform: translateY(-16px); } 35.5%, 100% { opacity: 1; transform: none; } }
+      @keyframes kb-st-right  { 0%, 36% { opacity: 0; transform: translateX(16px); }  38.5%, 100% { opacity: 1; transform: none; } }
+      @keyframes kb-st-bottom { 0%, 39% { opacity: 0; transform: translateY(16px); }  41.5%, 100% { opacity: 1; transform: none; } }
+      @keyframes kb-st-left   { 0%, 42% { opacity: 0; transform: translateX(-16px); } 44.5%, 100% { opacity: 1; transform: none; } }
+      @keyframes kb-brace-on  { 0%, 53% { opacity: 0; transform: translateY(-120px); } 56% { opacity: 1; } 62%, 100% { opacity: 1; transform: none; } }
+      @keyframes kb-brace-cut { 0%, 78% { transform: translateY(0); } 94%, 100% { transform: translateY(-160px); } }
+      @keyframes kb-cutline   { 0%, 78% { stroke-dashoffset: 200; } 94%, 100% { stroke-dashoffset: 0; } }
+
+      .howto-video.is-paused .scene,
+      .howto-video.is-paused .vcap,
+      .howto-video.is-paused [class^="anim-"],
+      .howto-video.is-paused [class^="st-"] {
+        animation-play-state: paused;
+      }
+    }
+
+    /* Reduced motion: show the loaded station as a still frame */
+    @media (prefers-reduced-motion: reduce) {
+      .scene.s2, .vcap.c2 { opacity: 1; }
+      .video-toggle { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">Cutting Station <span class="brand-badge">Z14</span></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="how-it-works.html">How it works</a>
+        <a href="design.html">Design</a>
+        <a href="safety.html">Safety</a>
+        <a href="team.html">Team</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero reveal">
+      <span class="eyebrow">GNG2101 · University of Ottawa · Team Z14</span>
+      <h1>Cut paper with one hand. No help needed.</h1>
+      <p class="lede">The one-hand adaptive cutting station lets a child with limited hand mobility cut paper on her own. A teacher sets it up once. The child does the rest.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="how-it-works.html">See how it works</a>
+        <a class="btn btn-secondary" href="safety.html">Read about safety</a>
+      </div>
+    </section>
+
+    <section aria-labelledby="video-heading">
+      <h2 id="video-heading">Watch how to use it</h2>
+      <figure class="howto-video" id="howto-video">
+        <!-- TODO: replace this animated sequence with real prototype footage when video is added to the repo. -->
+        <svg viewBox="0 0 800 450" role="img" aria-label="Animated demo in four scenes. One: the teacher tilts the board and locks the angle. Two: paper lays on the steel plate and four magnetic strips press it down, one on each side. Three: the closed-loop brace slides over the child's hand with the blade pointing down. Four: she drags her hand forward and the blade cuts the paper.">
+          <rect width="800" height="450" fill="#f6f1e7"/>
+
+          <!-- Scene 1: set the angle (side view) -->
+          <g class="scene s1">
+            <rect x="60" y="384" width="680" height="8" rx="4" fill="#e2d9c6"/>
+            <rect x="290" y="374" width="36" height="12" rx="6" fill="#1f2a3a"/>
+            <rect x="560" y="374" width="36" height="12" rx="6" fill="#1f2a3a"/>
+            <rect x="280" y="360" width="330" height="16" rx="4" fill="#b08a52"/>
+            <g class="anim-board">
+              <rect x="296" y="350" width="320" height="14" rx="4" fill="#c9a36a"/>
+              <rect x="540" y="336" width="10" height="18" rx="3" fill="#46536a"/>
+            </g>
+            <g class="anim-lock">
+              <circle cx="650" cy="240" r="26" fill="#f5c518"/>
+              <path d="M638 240 l8 9 l16 -18" stroke="#1f2a3a" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="650" y="292" text-anchor="middle" font-family="Rubik, sans-serif" font-size="16" fill="#46536a">Locked</text>
+            </g>
+            <text x="80" y="60" font-family="Rubik, sans-serif" font-size="18" fill="#46536a">The teacher tilts the board, then locks it.</text>
+          </g>
+
+          <!-- Scene 2: load the paper, four strips -->
+          <g class="scene s2">
+            <rect x="200" y="60" width="400" height="330" rx="14" fill="#c9a36a"/>
+            <rect x="230" y="85" width="340" height="280" rx="8" fill="#aeb6c2"/>
+            <g class="anim-paper2">
+              <rect x="270" y="125" width="260" height="200" rx="4" fill="#ffffff"/>
+            </g>
+            <rect class="st-top"    x="278" y="118" width="244" height="14" rx="7" fill="#1a56c4"/>
+            <rect class="st-right"  x="523" y="141" width="14" height="168" rx="7" fill="#1a56c4"/>
+            <rect class="st-bottom" x="278" y="318" width="244" height="14" rx="7" fill="#1a56c4"/>
+            <rect class="st-left"   x="263" y="141" width="14" height="168" rx="7" fill="#1a56c4"/>
+            <text x="80" y="40" font-family="Rubik, sans-serif" font-size="18" fill="#46536a">Four magnetic strips. One per side.</text>
+          </g>
+
+          <!-- Scene 3: brace slides over the hand -->
+          <g class="scene s3">
+            <path d="M330 340 q-22 -70 0 -130 q12 -34 70 -34 q58 0 70 34 q22 60 0 130 z" fill="#fffdf8" stroke="#46536a" stroke-width="4"/>
+            <g class="anim-brace-on">
+              <path fill-rule="evenodd" fill="#f5c518" stroke="#d9a900" stroke-width="2" d="M310 160 h180 a30 30 0 0 1 30 30 v60 a30 30 0 0 1 -30 30 h-180 a30 30 0 0 1 -30 -30 v-60 a30 30 0 0 1 30 -30 Z M355 195 h90 a25 25 0 0 1 25 25 a25 25 0 0 1 -25 25 h-90 a25 25 0 0 1 -25 -25 a25 25 0 0 1 25 -25 Z"/>
+              <rect x="390" y="282" width="16" height="26" rx="3" fill="#46536a"/>
+              <polygon points="392,308 404,308 398,324" fill="#e8ecf4" stroke="#46536a" stroke-width="2"/>
+            </g>
+            <text x="80" y="60" font-family="Rubik, sans-serif" font-size="18" fill="#46536a">The hand slides through the opening.</text>
+            <text x="80" y="86" font-family="Rubik, sans-serif" font-size="18" fill="#46536a">The blade points down.</text>
+          </g>
+
+          <!-- Scene 4: drag forward, the blade cuts -->
+          <g class="scene s4">
+            <rect x="200" y="60" width="400" height="330" rx="14" fill="#c9a36a"/>
+            <rect x="230" y="85" width="340" height="280" rx="8" fill="#aeb6c2"/>
+            <rect x="270" y="125" width="260" height="200" rx="4" fill="#ffffff"/>
+            <rect x="278" y="118" width="244" height="14" rx="7" fill="#1a56c4"/>
+            <rect x="523" y="141" width="14" height="168" rx="7" fill="#1a56c4"/>
+            <rect x="278" y="318" width="244" height="14" rx="7" fill="#1a56c4"/>
+            <rect x="263" y="141" width="14" height="168" rx="7" fill="#1a56c4"/>
+            <line class="anim-cutline" x1="400" y1="312" x2="400" y2="150" stroke="#1f2a3a" stroke-width="3" stroke-linecap="round" pathLength="200" stroke-dasharray="200" stroke-dashoffset="200"/>
+            <g class="anim-brace-cut">
+              <g transform="translate(365 295)">
+                <path fill-rule="evenodd" fill="#f5c518" stroke="#d9a900" stroke-width="1.5" d="M14 0 h42 a14 14 0 0 1 14 14 v16 a14 14 0 0 1 -14 14 h-42 a14 14 0 0 1 -14 -14 v-16 a14 14 0 0 1 14 -14 Z M26 12 h18 a8 8 0 0 1 8 8 v4 a8 8 0 0 1 -8 8 h-18 a8 8 0 0 1 -8 -8 v-4 a8 8 0 0 1 8 -8 Z"/>
+              </g>
+            </g>
+            <text x="80" y="40" font-family="Rubik, sans-serif" font-size="18" fill="#46536a">She drags forward. The blade cuts.</text>
+          </g>
+        </svg>
+        <figcaption class="vbar">
+          <div class="vcaps">
+            <p class="vcap c1">Step 1. The teacher sets the angle and locks the board.</p>
+            <p class="vcap c2">Step 2. The paper lays flat. Four magnetic strips press it down, one on each side.</p>
+            <p class="vcap c3">Step 3. The brace slides over her hand. The blade points down.</p>
+            <p class="vcap c4">Step 4. She drags her hand forward. The blade cuts as it moves.</p>
+          </div>
+          <button class="video-toggle" type="button" aria-pressed="false" onclick="var f=document.getElementById('howto-video');var p=f.classList.toggle('is-paused');this.textContent=p?'Play':'Pause';this.setAttribute('aria-pressed',p);">Pause</button>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section aria-labelledby="who-heading" class="prose">
+      <h2 id="who-heading">Who it is for</h2>
+      <p>Our client is an elementary school student with limited hand mobility. Her dominant hand can push and drag but cannot grip well. Her other arm can push and rotate but cannot grip. She wants to cut paper in class without an adult holding the sheet or working a tool for her.</p>
+      <p>The station removes every step that needs a grip. Nothing to squeeze. Nothing to hold down. She pushes, drags, and cuts.</p>
+    </section>
+
+    <section aria-labelledby="subsystems-heading">
+      <h2 id="subsystems-heading">Four subsystems, one job</h2>
+      <ul class="card-grid">
+        <li class="card">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20L19 8"/><path d="M9 20a4 4 0 0 0-2-3.5"/></svg>
+          </span>
+          <h3>Adjustable angled board</h3>
+          <p>The teacher sets the angle and locks it. The work surface tilts toward the child instead of making her reach.</p>
+        </li>
+        <li class="card">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v7a6 6 0 0 0 12 0V4"/><path d="M6 4h4v5H6zM14 4h4v5h-4z"/></svg>
+          </span>
+          <h3>Magnet attachment system</h3>
+          <p>The paper lays flat on a steel plate. Four magnetic strips hold it down, one on each side, so no hand has to.</p>
+        </li>
+        <li class="card">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 12.5V10a2 2 0 0 0-4 0v-.5a2 2 0 0 0-4 0V9a2 2 0 0 0-4 0v5a7 7 0 0 0 12 5l3-3.5a2 2 0 0 0-3-2.5z"/></svg>
+          </span>
+          <h3>Wearable cutting brace</h3>
+          <p>A 3D printed closed loop with an opening for her hand. It holds a ceramic blade facing down. Drag forward to cut. No button. No trigger.</p>
+        </li>
+        <li class="card">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15h16v4H4z"/><path d="M6 19v2M18 19v2M8 15V9a4 4 0 0 1 8 0v6"/></svg>
+          </span>
+          <h3>Rubber feet stabilizer</h3>
+          <p>Rubber feet under the board stop it from sliding during the cut.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="cta-heading" class="prose">
+      <h2 id="cta-heading">See the full design</h2>
+      <p>Each subsystem answers one need our client told us about. Read the reasoning behind every choice.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="design.html">Explore the design</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>Team Z14</strong> · GNG2101 · University of Ottawa</p>
+      <p>A course deliverable. Built with our client and her teacher through CIL Western Wisconsin.</p>
+    </div>
+  </footer>
+</body>
+</html>
