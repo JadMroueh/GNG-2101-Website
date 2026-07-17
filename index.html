@@ -74,6 +74,12 @@
     .vnum:hover { background: var(--blue-tint); }
     .vnum:active { transform: scale(0.94); }
 
+    /* Phone view: caption on top, numbers and pause spaced on one row below */
+    @media (max-width: 600px) {
+      .vcaps { flex-basis: 100%; }
+      .vnums { flex: 1; justify-content: space-between; }
+    }
+
     .scene { opacity: 0; }
 
     .howto-video.no-anim * { animation: none !important; }
