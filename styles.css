@@ -100,6 +100,40 @@ a { color: var(--blue); }
   min-height: 44px;
 }
 
+.brand-logo {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  transform-origin: 50% 80%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .brand-logo path {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: logo-draw 700ms ease-out forwards;
+  }
+  .brand-logo path:nth-of-type(1) { animation-delay: 100ms; }
+  .brand-logo path:nth-of-type(2) { animation-delay: 220ms; }
+  .brand-logo path:nth-of-type(3) { animation-delay: 340ms; }
+  .brand-logo path:nth-of-type(4) { animation-delay: 460ms; }
+
+  @keyframes logo-draw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  .brand:hover .brand-logo,
+  .brand:focus-visible .brand-logo {
+    animation: logo-wave 600ms ease-in-out;
+  }
+
+  @keyframes logo-wave {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-12deg); }
+    60% { transform: rotate(10deg); }
+  }
+}
+
 .brand-badge {
   background: var(--yellow);
   color: var(--ink);
