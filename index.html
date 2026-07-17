@@ -19,8 +19,9 @@
     .howto-video svg { display: block; width: 100%; height: auto; }
     .howto-video .vbar {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem 1rem;
       padding: 0.75rem 1.25rem;
       border-top: 1px solid var(--line);
     }
@@ -55,7 +56,27 @@
     }
     .video-toggle:hover { background: var(--blue-tint); }
 
+    .vnums { display: flex; gap: 0.4rem; flex-shrink: 0; }
+    .vnum {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--blue);
+      background: var(--surface);
+      color: var(--blue-dark);
+      font-family: 'Rubik', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: background 200ms ease-out, transform 150ms ease-out;
+    }
+    .vnum:hover { background: var(--blue-tint); }
+    .vnum:active { transform: scale(0.94); }
+
     .scene { opacity: 0; }
+
+    .howto-video.no-anim * { animation: none !important; }
 
     @media (prefers-reduced-motion: no-preference) {
       .scene.s1 { animation: sc1 24s ease-in-out infinite; }
@@ -94,6 +115,13 @@
       @keyframes kb-brace-cut { 0%, 78% { transform: translateY(0); } 94%, 100% { transform: translateY(-160px); } }
       @keyframes kb-cutline   { 0%, 78% { stroke-dashoffset: 200; } 94%, 100% { stroke-dashoffset: 0; } }
 
+      .howto-video .scene,
+      .howto-video .vcap,
+      .howto-video [class^="anim-"],
+      .howto-video [class^="st-"] {
+        animation-delay: var(--seek, 0s);
+      }
+
       .howto-video.is-paused .scene,
       .howto-video.is-paused .vcap,
       .howto-video.is-paused [class^="anim-"],
@@ -102,10 +130,15 @@
       }
     }
 
-    /* Reduced motion: show the loaded station as a still frame */
+    /* Reduced motion: still frames, the number buttons switch scenes */
     @media (prefers-reduced-motion: reduce) {
-      .scene.s2, .vcap.c2 { opacity: 1; }
       .video-toggle { display: none; }
+      .howto-video:not(.show-s1):not(.show-s3):not(.show-s4) .scene.s2,
+      .howto-video:not(.show-s1):not(.show-s3):not(.show-s4) .vcap.c2 { opacity: 1; }
+      .howto-video.show-s1 .scene.s1, .howto-video.show-s1 .vcap.c1 { opacity: 1; }
+      .howto-video.show-s2 .scene.s2, .howto-video.show-s2 .vcap.c2 { opacity: 1; }
+      .howto-video.show-s3 .scene.s3, .howto-video.show-s3 .vcap.c3 { opacity: 1; }
+      .howto-video.show-s4 .scene.s4, .howto-video.show-s4 .vcap.c4 { opacity: 1; }
     }
   </style>
 </head>
@@ -212,9 +245,29 @@
             <p class="vcap c3">Step 3. The brace slides over her hand. The blade points down.</p>
             <p class="vcap c4">Step 4. She drags her hand forward. The blade cuts as it moves.</p>
           </div>
-          <button class="video-toggle" type="button" aria-pressed="false" onclick="var f=document.getElementById('howto-video');var p=f.classList.toggle('is-paused');this.textContent=p?'Play':'Pause';this.setAttribute('aria-pressed',p);">Pause</button>
+          <div class="vnums" role="group" aria-label="Jump to a step">
+            <button class="vnum" type="button" aria-label="Step 1: set the angle" onclick="vseek(1, 0)">1</button>
+            <button class="vnum" type="button" aria-label="Step 2: load the paper" onclick="vseek(2, 6.5)">2</button>
+            <button class="vnum" type="button" aria-label="Step 3: put on the brace" onclick="vseek(3, 12.5)">3</button>
+            <button class="vnum" type="button" aria-label="Step 4: drag and cut" onclick="vseek(4, 18.5)">4</button>
+          </div>
+          <button class="video-toggle" type="button" id="vtoggle" aria-pressed="false" onclick="var f=document.getElementById('howto-video');var p=f.classList.toggle('is-paused');this.textContent=p?'Play':'Pause';this.setAttribute('aria-pressed',p);">Pause</button>
         </figcaption>
       </figure>
+      <script>
+        function vseek(n, t) {
+          var f = document.getElementById('howto-video');
+          f.classList.remove('is-paused', 'show-s1', 'show-s2', 'show-s3', 'show-s4');
+          f.classList.add('show-s' + n);
+          var tg = document.getElementById('vtoggle');
+          tg.textContent = 'Pause';
+          tg.setAttribute('aria-pressed', 'false');
+          f.style.setProperty('--seek', (-t) + 's');
+          f.classList.add('no-anim');
+          void f.offsetWidth;
+          f.classList.remove('no-anim');
+        }
+      </script>
     </section>
 
     <section aria-labelledby="who-heading" class="prose">
