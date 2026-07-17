@@ -107,25 +107,7 @@ a { color: var(--blue); }
   transform-origin: 50% 80%;
 }
 
-.brand-logo .wing { transform-box: fill-box; }
-.brand-logo .wing-l { transform-origin: 100% 50%; }
-.brand-logo .wing-r { transform-origin: 0% 50%; }
-
 @media (prefers-reduced-motion: no-preference) {
-  .brand-logo path {
-    stroke-dasharray: 60;
-    stroke-dashoffset: 60;
-    animation: logo-draw 700ms ease-out forwards;
-  }
-  .brand-logo path:nth-of-type(1) { animation-delay: 100ms; }
-  .brand-logo path:nth-of-type(2) { animation-delay: 220ms; }
-  .brand-logo path:nth-of-type(3) { animation-delay: 340ms; }
-  .brand-logo path:nth-of-type(4) { animation-delay: 460ms; }
-
-  @keyframes logo-draw {
-    to { stroke-dashoffset: 0; }
-  }
-
   .brand:hover .brand-logo,
   .brand:focus-visible .brand-logo {
     animation: logo-wave 600ms ease-in-out;
@@ -135,28 +117,6 @@ a { color: var(--blue); }
     0%, 100% { transform: rotate(0); }
     25% { transform: rotate(-12deg); }
     60% { transform: rotate(10deg); }
-  }
-
-  .brand:hover .wing-l,
-  .brand:focus-visible .wing-l {
-    animation: flap-l 700ms ease-in-out;
-  }
-
-  .brand:hover .wing-r,
-  .brand:focus-visible .wing-r {
-    animation: flap-r 700ms ease-in-out;
-  }
-
-  @keyframes flap-l {
-    0%, 100% { transform: rotate(0); }
-    35% { transform: rotate(18deg); }
-    70% { transform: rotate(-8deg); }
-  }
-
-  @keyframes flap-r {
-    0%, 100% { transform: rotate(0); }
-    35% { transform: rotate(-18deg); }
-    70% { transform: rotate(8deg); }
   }
 }
 

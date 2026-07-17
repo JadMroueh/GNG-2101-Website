@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(\"{0:N1} GB\" -f \\(\\(Get-ChildItem \"$env:LOCALAPPDATA\\\\npm-cache\" -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum\\).Sum / 1GB\\))",
+      "PowerShell(npm cache clean --force; Remove-Item \"$env:LOCALAPPDATA\\\\npm-cache\\\\_npx\" -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue; Get-PSDrive C | Select-Object Free)",
+      "Read(//c/Users/pito/.claude/plugins/cache/ui-ux-pro-max-skill/**)",
+      "PowerShell(python \"C:\\\\Users\\\\pito\\\\.claude\\\\plugins\\\\cache\\\\ui-ux-pro-max-skill\\\\ui-ux-pro-max\\\\2.5.0\\\\src\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"assistive device accessibility education product showcase\" --design-system -p \"Team Z14 Cutting Station\" -f markdown)",
+      "PowerShell(Start-Process \"c:\\\\Users\\\\pito\\\\Desktop\\\\Summer 2nd year\\\\GNG 2101\\\\GNG-2101-Website\\\\index.html\")",
+      "PowerShell(git add index.html how-it-works.html design.html safety.html team.html styles.css)",
+      "PowerShell(git push origin main)",
+      "PowerShell(git add team.html)",
+      "PowerShell(git add index.html design.html)",
+      "PowerShell(git add index.html)",
+      "PowerShell(git add styles.css)",
+      "PowerShell($files = @\\('index.html','how-it-works.html','design.html','safety.html','team.html'\\); foreach \\($f in $files\\) { $c = Get-Content $f -Raw; $c = $c -replace '\\\\| Team Z14</title>', '| Helping Hand</title>'; $c = $c -replace '</svg> Cutting Station <span class=\"brand-badge\">Z14</span></a>', '</svg> Helping Hand <span class=\"brand-badge\">Z14</span></a>'; $c = $c -replace '<p><strong>Team Z14</strong> · GNG2101 · University of Ottawa</p>', '<p><strong>Helping Hand</strong> · Team Z14 · GNG2101 · University of Ottawa</p>'; Set-Content $f $c -Encoding utf8 -NoNewline })",
+      "PowerShell(git add index.html how-it-works.html design.html safety.html team.html styles.css logo.svg)",
+      "Read(//c/Users/pito/Downloads/**)",
+      "PowerShell(git add -A)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\pito\\Downloads"
+    ]
+  }
+}
